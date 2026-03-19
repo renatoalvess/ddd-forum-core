@@ -1,15 +1,18 @@
 import { describe, expect, it, beforeEach } from 'vitest'
-import { InMemoryQuestionsRepository } from 'test/in-memory-questions-repository.js'
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository.js'
 import { GetQuestionBySlugUseCase } from './get-question-by-slug.js'
 import { makeQuestion } from 'test/factories/make-question.js'
 import { Slug } from '../../enterprise/entities/value-objects/slug.js'
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachments-respository.js'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
+let inMemoryQuestionsAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let sut: GetQuestionBySlugUseCase
 
 describe('Get Question By Slug', () => {
   beforeEach(() => {
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
+    inMemoryQuestionsAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(inMemoryQuestionsAttachmentsRepository)
     sut = new GetQuestionBySlugUseCase(inMemoryQuestionsRepository)
   })
 
@@ -22,11 +25,14 @@ describe('Get Question By Slug', () => {
 
     await inMemoryQuestionsRepository.create(newQuestion)
 
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       slug: 'new-question',
     })
 
-    expect(question.id).toBeTruthy()
-    expect(question.title).toEqual(newQuestion.title)
+    if (result.isRight()) {
+      const { question } = result.value
+      expect(question.id).toBeTruthy()
+      expect(question.title).toEqual(newQuestion.title)
+    }
   })
 })

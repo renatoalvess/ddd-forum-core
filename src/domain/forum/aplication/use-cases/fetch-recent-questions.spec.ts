@@ -1,14 +1,17 @@
 import { describe, expect, it, beforeEach } from 'vitest'
-import { InMemoryQuestionsRepository } from 'test/in-memory-questions-repository.js'
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository.js'
 import { makeQuestion } from 'test/factories/make-question.js'
 import { FetchRecentQuestionsUseCase } from './fetch-recent-questions.js'
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachments-respository.js'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
+let inMemoryQuestionsAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let sut: FetchRecentQuestionsUseCase
 
 describe('Fetch Recent Questions', () => {
   beforeEach(() => {
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
+    inMemoryQuestionsAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(inMemoryQuestionsAttachmentsRepository)
     sut = new FetchRecentQuestionsUseCase(inMemoryQuestionsRepository)
   })
 
@@ -17,9 +20,9 @@ describe('Fetch Recent Questions', () => {
     await inMemoryQuestionsRepository.create(makeQuestion({ createdAt: new Date(2022, 0, 18) }))
     await inMemoryQuestionsRepository.create(makeQuestion({ createdAt: new Date(2022, 0, 23) }))
 
-    const { questions } = await sut.execute({ page: 1 })
+    const result = await sut.execute({ page: 1 })
 
-    expect(questions).toEqual([
+    expect(result.value?.questions).toEqual([
       expect.objectContaining({ createdAt: new Date(2022, 0, 23) }),
       expect.objectContaining({ createdAt: new Date(2022, 0, 20) }),
       expect.objectContaining({ createdAt: new Date(2022, 0, 18) }),
@@ -31,8 +34,8 @@ describe('Fetch Recent Questions', () => {
       await inMemoryQuestionsRepository.create(makeQuestion({ createdAt: new Date(2022, 0, i) }))
     }
 
-    const { questions } = await sut.execute({ page: 2 })
+    const result = await sut.execute({ page: 2 })
 
-    expect(questions).toHaveLength(2)
+    expect(result.value?.questions).toHaveLength(2)
   })
 })

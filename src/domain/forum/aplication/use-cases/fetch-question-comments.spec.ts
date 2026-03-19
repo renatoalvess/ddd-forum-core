@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
-import { InMemoryQuestionCommentsRepository } from 'test/in-memory-question-comments-respository'
+import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-respository'
 import { makeQuestionComment } from 'test/factories/make-question-comment'
 import { FecthQuestionCommentsUseCase } from './fetch-question-comments'
 
@@ -26,9 +26,9 @@ describe('Fetch Question Comment', () => {
       makeQuestionComment({ questionId: new UniqueEntityId('question-1') }),
     )
 
-    const { questionsComments } = await sut.execute({ questionId: 'question-1', page: 1 })
+    const result = await sut.execute({ questionId: 'question-1', page: 1 })
 
-    expect(questionsComments).toHaveLength(3)
+    expect(result.value?.questionsComments).toHaveLength(3)
   })
 
   it('should be able to fetch paginated question comments', async () => {
@@ -38,8 +38,8 @@ describe('Fetch Question Comment', () => {
       )
     }
 
-    const { questionsComments } = await sut.execute({ questionId: 'question-1', page: 2 })
+    const result = await sut.execute({ questionId: 'question-1', page: 2 })
 
-    expect(questionsComments).toHaveLength(2)
+    expect(result.value?.questionsComments).toHaveLength(2)
   })
 })

@@ -1,16 +1,19 @@
 import { describe, expect, it, beforeEach } from 'vitest'
-import { InMemoryQuestionsRepository } from 'test/in-memory-questions-repository.js'
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository.js'
 import { makeQuestion } from 'test/factories/make-question.js'
-import { InMemoryQuestionCommentsRepository } from 'test/in-memory-question-comments-respository.js'
+import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-respository.js'
 import { CommentOnQuestionUseCase } from './comment-on-question.js'
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachments-respository.js'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
+let inMemoryQuestionsAttachmentsRepository: InMemoryQuestionAttachmentsRepository
 let inMemoryQuestionsCommentsRepository: InMemoryQuestionCommentsRepository
 let sut: CommentOnQuestionUseCase
 
 describe('Comment on Question', () => {
   beforeEach(() => {
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
+    inMemoryQuestionsAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(inMemoryQuestionsAttachmentsRepository)
     inMemoryQuestionsCommentsRepository = new InMemoryQuestionCommentsRepository()
     sut = new CommentOnQuestionUseCase(inMemoryQuestionsRepository, inMemoryQuestionsCommentsRepository)
   })
