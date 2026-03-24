@@ -49,11 +49,11 @@ Siga estas instruções para configurar e rodar o projeto em seu ambiente local.
 
 1. Clone o repositório:
    ```sh
-   git clone https://github.com/seu-usuario/clean-ddd.git
+   git clone https://github.com/renatoalvess/ddd-forum-core.git
    ```
 2. Navegue até o diretório do projeto:
    ```sh
-   cd clean-ddd
+   cd ddd-forum-core
    ```
 3. Instale as dependências:
    ```sh
@@ -141,3 +141,7 @@ Os casos de uso representam as ações que um usuário pode realizar no sistema.
 ### Repositórios
 
 Os repositórios são uma abstração sobre a persistência de dados. Eles fornecem uma interface para consultar e salvar os agregados, escondendo os detalhes de implementação do banco de dados. Para os testes, utilizamos repositórios em memória para manter os testes rápidos e independentes de um banco de dados real.
+
+### Licença
+
+Este projeto está sob a licença MIT.
